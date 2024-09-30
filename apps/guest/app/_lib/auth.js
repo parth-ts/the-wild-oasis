@@ -13,9 +13,10 @@ const authConfig = {
         const users = [
           {
             id: 1,
-            name: "Gowtham",
-            email: "gowtham@gowthamreilly.com",
-            password: "password",
+            name: "Luffy",
+            email: "luffy@strawhatpirates.org",
+            password: "iloveadventure",
+            image: "https://avatarfiles.alphacoders.com/375/375473.jpeg",
           },
         ];
 
