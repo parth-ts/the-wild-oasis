@@ -1,13 +1,12 @@
 {
-  "name": "wild-oasis",
+  "name": "the-wild-oasis",
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "dev": "turbo dev"
   },
   "devDependencies": {
+    "@playwright/test": "^1.47.2",
     "prettier": "^3.2.5",
     "turbo": "^2.1.2",
     "typescript": "^5.4.5"
@@ -17,7 +16,6 @@
   },
   "packageManager": "npm@10.8.2",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ]
 }
