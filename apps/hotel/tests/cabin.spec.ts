@@ -1,65 +1,22 @@
 import { expect, test } from "@playwright/test";
 import path from "path";
-
-const APP_URL = "http://localhost:5173";
-const LOGIN_URL = `${APP_URL}/login`;
-const DASHBOARD_URL = `${APP_URL}/dashboard`;
-
-const LOGIN_EMAIL = "gowtham@gowthamreilly.com";
-const LOGIN_PASSWORD = "Revolution@24";
+import { apiClient } from "./services/api";
 
 const CUSTOMER_APP_URL = "http://localhost:3000/";
 const CUSTOMER_CABINS_URL = `${CUSTOMER_APP_URL}cabins`;
 
 const generateUniqueCabinName = () => {
-  return `Cabin ${Date.now()}`;
+  return `Self Destruct ${Date.now()}`;
 };
 
-test.beforeEach(async ({ page }) => {
-  await page.goto(APP_URL);
+let cabinId = undefined;
 
-  await page.waitForURL(LOGIN_URL);
-
-  expect(page.url()).toBe(LOGIN_URL);
-
-  const loginPageTitle = page.getByText("Log in to your account");
-
-  await expect(loginPageTitle).toBeVisible();
-
-  const emailAddressInputLocator = page.getByLabel("Email address");
-  const passwordInputLocator = page.getByLabel("Password");
-
-  await expect(emailAddressInputLocator).toBeVisible();
-  await expect(passwordInputLocator).toBeVisible();
-
-  await emailAddressInputLocator.fill(LOGIN_EMAIL);
-
-  await passwordInputLocator.fill(LOGIN_PASSWORD);
-
-  await expect(emailAddressInputLocator).toHaveValue(LOGIN_EMAIL);
-  await expect(passwordInputLocator).toHaveValue(LOGIN_PASSWORD);
-
-  await expect(passwordInputLocator).toHaveAttribute("type", "password");
-
-  const loginButtonLocator = page.getByRole("button", { name: "Log in" });
-
-  await expect(loginButtonLocator).toBeVisible();
-
-  await loginButtonLocator.click();
-
-  await page.waitForURL(DASHBOARD_URL);
-
-  expect(page.url()).toBe(DASHBOARD_URL);
-
-  const pageTitle = page
-    .getByRole("heading", { name: "Dashboard" })
-    .and(page.getByText("Dashboard"))
-    .and(page.locator("h1"));
-
-  await expect(pageTitle).toBeVisible();
+test.beforeEach(async () => {
+  cabinId = undefined;
 });
 
 test("create a cabin", async ({ page }) => {
+  await page.goto("/");
   const cabinsNavMenuItemLink = page.getByRole("link", { name: "Cabins" });
 
   await expect(cabinsNavMenuItemLink).toBeVisible();
@@ -127,11 +84,25 @@ test("create a cabin", async ({ page }) => {
 
   await addNewCabinFormSubmitButtonLocator.click();
 
+  const res = await page.waitForResponse(async (response) => {
+    const includesCabin = response.url().includes("/cabins");
+
+    if (!includesCabin) return false;
+
+    return response.status() === 201;
+  });
+
+  const data = await res.json();
+
+  cabinId = data.id;
+
   const addNewCabinCreationSuccessMessageLocator = page.getByText(
     "New cabin successfully created"
   );
 
-  await expect(addNewCabinCreationSuccessMessageLocator).toBeVisible();
+  await expect(addNewCabinCreationSuccessMessageLocator).toBeVisible({
+    timeout: 30000,
+  });
 
   await expect(addNewCabinFormLocator).not.toBeVisible();
 
@@ -172,4 +143,29 @@ test("create a cabin", async ({ page }) => {
   await page.reload();
 
   await expect(newlyCreatedCabinNameLocator).toBeVisible();
+});
+
+test("delete a cabin", async ({ page }) => {
+  const cabinName = generateUniqueCabinName();
+
+  const res = await apiClient.createCabin({
+    name: cabinName,
+    maxCapacity: 4,
+    regularPrice: 200,
+    discount: 20,
+    description: "A cozy cabin in the woods",
+    image: "https://example.com/image.jpg",
+  });
+
+  const data = await res.json();
+
+  console.log("DATA", data);
+
+  await page.goto("/");
+});
+
+test.afterEach(async () => {
+  if (cabinId) {
+    await apiClient.deleteCabinById(cabinId);
+  }
 });

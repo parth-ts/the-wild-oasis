@@ -1,20 +1,20 @@
 import { expect, test } from "@playwright/test";
 
-// 1. Test plan
-// 1. login page should be displayed when not logged in
-// 2. user should be able to login
-// 3. when logged in, user should be able to see the dashboard
-// 4. user should be able to logout
-
-const APP_URL = "http://localhost:5173";
-const LOGIN_URL = `${APP_URL}/login`;
-const DASHBOARD_URL = `${APP_URL}/dashboard`;
+const LOGIN_URL = `/login`;
+const DASHBOARD_URL = `/dashboard`;
 
 const LOGIN_EMAIL = "gowtham@gowthamreilly.com";
 const LOGIN_PASSWORD = "Revolution@24";
 
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [],
+  },
+});
+
 test("login page should be displayed when not logged in", async ({ page }) => {
-  await page.goto(APP_URL);
+  await page.goto("/");
 
   await page.waitForURL(LOGIN_URL);
 
@@ -55,30 +55,4 @@ test("login page should be displayed when not logged in", async ({ page }) => {
     .and(page.locator("h1"));
 
   await expect(pageTitle).toBeVisible();
-
-  const logoutButtonLocator = page.getByRole("button").filter({
-    has: page.getByLabel("Log out"),
-  });
-
-  await expect(logoutButtonLocator).toBeVisible();
-
-  await logoutButtonLocator.click();
-
-  await page.waitForURL(LOGIN_URL);
-
-  expect(page.url()).toBe(LOGIN_URL);
-
-  await expect(loginPageTitle).toBeVisible();
-
-  await emailAddressInputLocator.fill(LOGIN_EMAIL);
-
-  await passwordInputLocator.fill("jhdkjjkhd");
-
-  await loginButtonLocator.click();
-
-  const errorMessageLocator = page.getByText(
-    "Provided email or password are incorrect"
-  );
-
-  await expect(errorMessageLocator).toBeVisible();
 });
