@@ -1,6 +1,14 @@
 import { test, expect } from "@playwright/test";
 const APP_URL = "http://localhost:5173";
 const LOGIN_URL = `${APP_URL}/login`;
+
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [],
+  },
+});
+
 test("toast for wrong credentials", async ({ page }) => {
   await page.goto(APP_URL);
   await page.waitForURL(LOGIN_URL);
