@@ -74,6 +74,62 @@ test.beforeEach("test navBar", async ({ page }) => {
   await expect(settingsBtn).toBeVisible();
 });
 
+test("test header, update account", async ({ page }) => {
+  expect(page.url()).toBe(DASHBOARD_URL);
+
+  // logout
+  const logoutButton = page.locator("button").getByLabel("Log out");
+  await expect(logoutButton).toBeVisible();
+
+  // theme
+  const themeButton = page.locator("button").getByLabel("Theme");
+  await expect(themeButton).toBeVisible();
+
+  // account/profile
+  const accountButton = page.locator("button").getByLabel("Account");
+  await expect(accountButton).toBeVisible();
+
+  // update account/profile
+  await accountButton.click();
+  const updatePageHeadingLocator = page
+    .locator("h1")
+    .filter({ hasText: "Update your account" });
+  await expect(updatePageHeadingLocator).toBeVisible();
+
+  const updateUserDataHeadingLocator = page
+    .locator("h3")
+    .filter({ hasText: "Update user data" });
+  await expect(updateUserDataHeadingLocator).toBeVisible();
+
+  const updateUserDataFormLocator = page
+    .locator("form")
+    .filter({ has: page.getByText("Email address") });
+  await expect(updateUserDataFormLocator).toBeVisible();
+
+  const updatePasswordForm = page
+    .locator("form")
+    .filter({ has: page.getByText("New password (min 8 chars)") });
+  await expect(updatePasswordForm).toBeVisible();
+
+  // const email = updateUserDataFormLocator.getByLabel("Email address");
+  const email = updateUserDataFormLocator.getByText("Email address");
+
+  await expect(email).toBeVisible();
+  // await expect(email).toBeDisabled();
+
+  const fullName = updateUserDataFormLocator.getByLabel("Full name");
+  await expect(fullName).toBeVisible();
+  // await expect(email).toBeEnabled();
+
+  const avatarImage = updateUserDataFormLocator.getByLabel("Avatar image");
+  await expect(avatarImage).toBeVisible();
+
+  // const emailInput = updateUserDataFormLocator.getByText(
+  //   "gowtham@gowthamreilly.com"
+  // );
+  // await expect(emailInput).toBeVisible();
+});
+
 test("cabin view", async ({ page }) => {
   await page.goto(CABINS_URL);
   expect(page.url()).toBe(CABINS_URL);
@@ -107,4 +163,21 @@ test("cabin view", async ({ page }) => {
 
   //   const options = sortByBtn.selectOption("Sort by name (A-Z)");
   /* select option and check for the data */
+});
+
+test("logout process", async ({ page }) => {
+  // logout button
+  const logoutButton = page.locator("button").getByLabel("Log out");
+  await expect(logoutButton).toBeVisible();
+
+  // logout process
+  await logoutButton.click();
+
+  await page.waitForURL(LOGIN_URL);
+  expect(page.url()).toBe(LOGIN_URL);
+
+  const loginHeading = page.getByRole("heading", {
+    name: "Log in to your account",
+  });
+  await expect(loginHeading).toBeVisible();
 });
