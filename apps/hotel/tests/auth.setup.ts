@@ -19,10 +19,8 @@ setup("login", async ({ request }) => {
       },
     }
   );
-  console.log(res);
 
   const data = await res.json();
-  console.log(data);
 
   const storageState = {
     cookies: [],
