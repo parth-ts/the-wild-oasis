@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -12,14 +12,12 @@ export default defineConfig({
     {
       name: "setup",
       testMatch: "tests/auth.setup.ts",
-      // use: {
-      //   baseURL: "http://localhost:5173",
-      // },
     },
     {
       name: "Chromium",
       dependencies: ["setup"],
       use: {
+        ...devices["Desktop Chrome"],
         storageState: "auth.json",
         baseURL: "http://localhost:5173",
       },

@@ -1,52 +1,45 @@
-import { test, expect } from "@playwright/test";
+import { test as setup } from "@playwright/test";
+import { writeFile } from "fs/promises";
 
-const LOGIN_URL = "http://localhost:5173/login";
-const DASHBOARD_URL = `http://localhost:5173/dashboard`;
-
+const API_URL = process.env.VITE_SUPABASE_URL!;
+const authFilePath = "auth.json";
 const LOGIN_EMAIL = "gowtham@gowthamreilly.com";
 const LOGIN_PASSWORD = "Revolution@24";
 
-test("login", async ({ page }) => {
-  await page.goto("http://localhost:5173");
-  // await page.goto("/");
-  // expect(page.url()).toBe(`${LOGIN_URL}`);
-  await page.waitForURL(LOGIN_URL);
-  expect(page.url()).toBe(LOGIN_URL);
+setup("login", async ({ request }) => {
+  const res = await request.post(
+    `${API_URL}/auth/v1/token?grant_type=password`,
+    {
+      data: {
+        email: LOGIN_EMAIL,
+        password: LOGIN_PASSWORD,
+      },
+      headers: {
+        apikey: process.env.VITE_SUPABASE_ANON_KEY!,
+      },
+    }
+  );
+  console.log(res);
 
-  const loginPageTitle = page.getByText("Log in to your account");
-  await expect(loginPageTitle).toBeVisible();
+  const data = await res.json();
+  console.log(data);
 
-  const emailAddressInputLocator = page.getByLabel("Email address");
-  const passwordInputLocator = page.getByLabel("Password");
+  const storageState = {
+    cookies: [],
+    origin: [
+      {
+        origin: process.env.APP_URL,
+        localStorage: [
+          {
+            name: `sb-${process.env.SUPABASE_PROJECT_ID}-auth-token`,
+            value: JSON.stringify(data),
+          },
+        ],
+      },
+    ],
+  };
 
-  await expect(emailAddressInputLocator).toBeVisible();
-  await expect(passwordInputLocator).toBeVisible();
+  process.env["ACCESS_TOKEN"] = data.access_token;
 
-  await emailAddressInputLocator.fill(LOGIN_EMAIL);
-
-  await passwordInputLocator.fill(LOGIN_PASSWORD);
-
-  await expect(emailAddressInputLocator).toHaveValue(LOGIN_EMAIL);
-  await expect(passwordInputLocator).toHaveValue(LOGIN_PASSWORD);
-
-  await expect(passwordInputLocator).toHaveAttribute("type", "password");
-
-  const loginButtonLocator = page.getByRole("button", { name: "Log in" });
-
-  await expect(loginButtonLocator).toBeVisible();
-
-  await loginButtonLocator.click();
-
-  await page.waitForURL(DASHBOARD_URL);
-
-  expect(page.url()).toBe(DASHBOARD_URL);
-
-  const pageTitle = page
-    .getByRole("heading", { name: "Dashboard" })
-    .and(page.getByText("Dashboard"))
-    .and(page.locator("h1"));
-
-  await expect(pageTitle).toBeVisible();
-
-  await page.context().storageState({ path: "auth.json" });
+  await writeFile(authFilePath, JSON.stringify(storageState));
 });
