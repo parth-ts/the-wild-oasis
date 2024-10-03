@@ -14,7 +14,7 @@ export default defineConfig({
   },
   reporter: [["list"], ["html"]],
   webServer: {
-    command: "npm run dev",
+    command: process.env.CI ? "npm run prod" : "npm run dev",
     port: 3000,
     reuseExistingServer: true,
   },
