@@ -4,6 +4,11 @@ on:
   pull_request:
     branches: "main"
   workflow_dispatch:
+    inputs:
+      url:
+        description: Site url to test
+        type: string
+        required: false
 
 jobs:
   test:
@@ -27,6 +32,7 @@ jobs:
         working-directory: apps/${{matrix.app-name}}
         run: npx playwright test
         env:
+          APP_URL: ${{inputs.url || ''}}
           SUPABASE_URL: ${{secrets.SUPABASE_URL}}
           SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
           NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}

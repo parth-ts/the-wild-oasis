@@ -1,6 +1,8 @@
 import { defineConfig } from "@playwright/test";
 
 const baseURL = (() => {
+  if (process.env.APP_URL) return process.env.APP_URL;
+
   if (process.env.NODE_ENV === "production") return "https://best.com";
 
   if (process.env.NODE_ENV === "development") return "http://localhost:3000";
