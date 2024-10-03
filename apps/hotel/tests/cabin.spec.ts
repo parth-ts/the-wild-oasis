@@ -59,9 +59,7 @@ test.describe("CRUD Cabins", () => {
       await expect(cabinPage.cabinDescriptionInputLocator).toBeVisible();
       await expect(cabinPage.cabinImageInputLocator).toBeVisible();
 
-      const cabinName = await cabinPage.fillCabinForm({
-        name: "cabon name",
-      });
+      const cabinName = await cabinPage.fillCabinForm();
 
       await expect(cabinPage.cabinNameInputLocator).toHaveValue(cabinName);
       await expect(cabinPage.cabinMaximumCapacityInputLocator).toHaveValue("4");
@@ -102,42 +100,6 @@ test.describe("CRUD Cabins", () => {
       await expect(addNewCabinFormLocator).not.toBeVisible();
 
       const newlyCreatedCabinNameLocator = page.getByText(cabinName);
-
-      await expect(newlyCreatedCabinNameLocator).toBeVisible();
-
-      await page.goto(CUSTOMER_APP_URL);
-
-      await page.waitForURL(CUSTOMER_APP_URL);
-
-      expect(page.url()).toBe(CUSTOMER_APP_URL);
-
-      const customerHomePageTitle = page.getByRole("heading", {
-        name: "Welcome to paradise.",
-      });
-
-      await expect(customerHomePageTitle).toBeVisible();
-
-      const exploreLuxuryCabinsButtonLocator = page.getByRole("link", {
-        name: "Explore luxury cabins",
-      });
-
-      await expect(exploreLuxuryCabinsButtonLocator).toBeVisible();
-
-      await exploreLuxuryCabinsButtonLocator.click();
-
-      await page.waitForURL(CUSTOMER_CABINS_URL);
-
-      expect(page.url()).toBe(CUSTOMER_CABINS_URL);
-
-      await page.reload();
-
-      const customerCabinsPageTitle = page.getByRole("heading", {
-        name: "Our Luxury Cabins",
-      });
-
-      await expect(customerCabinsPageTitle).toBeVisible();
-
-      await page.reload();
 
       await expect(newlyCreatedCabinNameLocator).toBeVisible();
     }

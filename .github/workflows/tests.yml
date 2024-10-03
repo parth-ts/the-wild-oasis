@@ -1,0 +1,49 @@
+name: End to end tests
+
+on:
+  pull_request:
+    branches: "main"
+
+jobs:
+  test_guest:
+    name: Test Guest Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Install browsers
+        run: npx playwright install --with-deps
+      - name: Execute Tests
+        working-directory: apps/guest
+        run: npx playwright test
+      - name: Upload articats
+        uses: actions/upload-artifact@v4
+        with:
+          path: apps/guest/playwright-report
+          name: playwright-report-guest
+          retention-days: 1
+  test_hotel:
+    name: Test Hotel Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Install browsers
+        run: npx playwright install --with-deps
+      - name: Execute Tests
+        working-directory: apps/hotel
+        run: npx playwright test
+      - name: Upload articats
+        uses: actions/upload-artifact@v4
+        with:
+          path: apps/hotel/playwright-report
+          name: playwright-report-hotel
+          retention-days: 1
