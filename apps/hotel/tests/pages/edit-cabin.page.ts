@@ -15,6 +15,16 @@ export class CabinPage {
       .getByRole("row")
       .filter({ has: page.getByText("Oasis") });
 
-    // this.meatBallMenu = this.cabinRowlocator.getByRole("button");
+    this.meatBallMenu = this.cabinRowLocator.getByRole("button");
+
+    this.editBtn = page.locator("ul li").getByRole("button", { name: "Edit" });
+
+    this.formLocator = page.locator("form");
+
+    this.cabinNameInputLocator = this.formLocator.getByLabel("Cabin name");
+
+    this.editCabinBtn = this.formLocator.getByRole("button", {
+      name: "Edit cabin",
+    });
   }
 }

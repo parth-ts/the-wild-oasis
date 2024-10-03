@@ -1,46 +1,36 @@
 import { expect, test } from "@playwright/test";
+import { CabinPage } from "./pages/edit-cabin.page";
 
 test.describe("test cabin", () => {
   test.only("edit cabin", async ({ page }) => {
+    const cabinPage = new CabinPage(page);
+
     await page.goto("/cabins");
 
     expect(page.url()).toBe(`${process.env.APP_URL}/cabins`);
 
-    const cabinRowlocator = page
-      .getByRole("table")
-      .locator("section")
-      .getByRole("row")
-      .filter({ has: page.getByText("Oasis") });
+    await expect(cabinPage.cabinRowLocator).toBeVisible();
 
-    await expect(cabinRowlocator).toBeVisible();
+    await expect(cabinPage.meatBallMenu).toBeVisible();
 
-    const meatBallMenu = cabinRowlocator.getByRole("button");
-    await expect(meatBallMenu).toBeVisible();
+    await cabinPage.meatBallMenu.click();
 
-    await meatBallMenu.click();
+    await expect(cabinPage.editBtn).toBeVisible();
 
-    const editBtn = page.locator("ul li").getByRole("button", { name: "Edit" });
-    await expect(editBtn).toBeVisible();
+    await cabinPage.editBtn.click();
 
-    await editBtn.click();
+    await expect(cabinPage.formLocator).toBeVisible();
 
-    const formLocator = page.locator("form");
-    await expect(formLocator).toBeVisible();
+    await expect(cabinPage.cabinNameInputLocator).toBeVisible();
 
-    const cabinNameInputLocator = formLocator.getByLabel("Cabin name");
-    await expect(cabinNameInputLocator).toBeVisible();
+    await expect(cabinPage.cabinNameInputLocator).toHaveValue("Oasis");
+    cabinPage.cabinNameInputLocator.fill("Victoria");
 
-    await expect(cabinNameInputLocator).toHaveValue("Oasis");
-    cabinNameInputLocator.fill("Victoria");
+    await expect(cabinPage.cabinNameInputLocator).toHaveValue("Victoria");
 
-    await expect(cabinNameInputLocator).toHaveValue("Victoria");
+    await expect(cabinPage.editCabinBtn).toBeVisible();
 
-    const editCabinBtn = formLocator.getByRole("button", {
-      name: "Edit cabin",
-    });
-    await expect(editCabinBtn).toBeVisible();
-
-    await editCabinBtn.click();
+    await cabinPage.editCabinBtn.click();
 
     await expect(page.getByText("Victoria")).toBeVisible();
   });
