@@ -10,10 +10,11 @@ export default defineConfig({
   testDir: "tests",
   use: {
     baseURL: baseURL,
+    trace: "retain-on-failure",
   },
   reporter: [["list"], ["html"]],
   webServer: {
-    command: "npm run dev",
+    command: process.env.CI ? "npm run prod" : "npm run dev",
     port: 3000,
     reuseExistingServer: true,
   },

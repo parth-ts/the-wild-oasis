@@ -70,7 +70,7 @@ test.describe("CRUD Cabins", () => {
       );
 
       const addNewCabinFormSubmitButtonLocator = page.getByRole("button", {
-        name: "Create new cabin",
+        name: "Create new cabinnnnnnn",
       });
 
       await expect(addNewCabinFormSubmitButtonLocator).toBeVisible();

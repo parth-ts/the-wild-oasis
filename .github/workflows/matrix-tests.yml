@@ -1,0 +1,39 @@
+name: End to end tests Matrix
+
+on:
+  pull_request:
+    branches: "main"
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        app-name: ["guest", "hotel"]
+    name: Test ${{matrix.app-name}} Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Install browsers
+        run: npx playwright install --with-deps
+      - name: Execute Tests
+        continue-on-error: true
+        working-directory: apps/${{matrix.app-name}}
+        run: npx playwright test
+        env:
+          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+          NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
+          NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
+      - name: Upload articats
+        uses: actions/upload-artifact@v4
+        with:
+          path: apps/${{matrix.app-name}}/playwright-report
+          name: playwright-report-${{matrix.app-name}}
+          retention-days: 1
