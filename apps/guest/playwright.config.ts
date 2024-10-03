@@ -1,11 +1,23 @@
 import { defineConfig } from "@playwright/test";
 
+const PLAYWRIGHT_ENV = process.env.PLAYWRIGHT_ENV;
+const isDevelopment = PLAYWRIGHT_ENV === "development";
+
 const baseURL = (() => {
-  if (process.env.APP_URL) return process.env.APP_URL;
-
-  if (process.env.NODE_ENV === "production") return "https://best.com";
-
-  if (process.env.NODE_ENV === "development") return "http://localhost:3000";
+  switch (PLAYWRIGHT_ENV) {
+    case "development":
+      return "http://localhost:3000";
+    case "production":
+      return "https://the-wild-oasis-guest-pi.vercel.app";
+    case "staging":
+      return "https://the-wild-oasis-guest-pi.vercel.app";
+    case "qa":
+      return "https://the-wild-oasis-guest-pi.vercel.app";
+    case "moon":
+      return "https://the-wild-oasis-guest-pi.vercel.app";
+    default:
+      return "https://the-wild-oasis-guest-pi.vercel.app";
+  }
 })();
 
 export default defineConfig({
@@ -15,9 +27,11 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   reporter: [["list"], ["html"]],
-  webServer: {
-    command: process.env.CI ? "npm run prod" : "npm run dev",
-    port: 3000,
-    reuseExistingServer: true,
-  },
+  webServer: isDevelopment
+    ? {
+        command: process.env.CI ? "npm run prod" : "npm run dev",
+        port: 3000,
+        reuseExistingServer: true,
+      }
+    : undefined,
 });
