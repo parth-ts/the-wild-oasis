@@ -16,7 +16,7 @@ const baseURL = (() => {
     case "moon":
       return "https://the-wild-oasis-guest-pi.vercel.app";
     default:
-      return "https://the-wild-oasis-guest-pi.vercel.app";
+      return "http://localhost:3000";
   }
 })();
 

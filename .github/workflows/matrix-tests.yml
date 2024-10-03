@@ -1,4 +1,4 @@
-name: End to end tests Matrix
+name: End to end tests
 
 on:
   pull_request:
@@ -15,13 +15,18 @@ on:
           - development
           - moon
           - qa
+      test-match:
+        description: Grep match
+        required: false
+        type: string
+        default: ""
 
 jobs:
   test:
     strategy:
       matrix:
         app-name: ["guest", "hotel"]
-    name: Test ${{matrix.app-name}} application
+    name: Testing ${{matrix.app-name}} application (${{inputs.playwright-env}})
     runs-on: ubuntu-latest
     steps:
       - name: Clone the repository
@@ -34,7 +39,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Execute Tests
         working-directory: apps/${{matrix.app-name}}
-        run: npx playwright test
+        run: npx playwright test -g ${{inputs.test-match || ''}}
         env:
           PLAYWRIGHT_ENV: ${{inputs.playwright-env}}
           SUPABASE_URL: ${{secrets.SUPABASE_URL}}

@@ -18,6 +18,6 @@ export const APP_URL = (() => {
     case "qa":
       return "https://the-wild-oasis-hotel-two.vercel.app";
     default:
-      return "https://the-wild-oasis-hotel-two.vercel.app";
+      return "http://localhost:5173";
   }
 })();
