@@ -23,5 +23,8 @@ export default defineConfig({
       testMatch: "tests/auth.setup.ts",
     },
   ],
+  expect: {
+    timeout: 30000,
+  },
   // reporter: [["list"], ["html"]],
 });

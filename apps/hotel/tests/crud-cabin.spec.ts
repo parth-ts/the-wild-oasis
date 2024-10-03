@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { CabinPage } from "./pages/edit-cabin.page";
+import { CabinPage } from "./pages/crud-cabin.page";
 import { FormComponent } from "./components/form.component";
 import { ToastComponent } from "./components/toast.component";
 import { CreateCabinPayload } from "./types";
@@ -26,7 +26,7 @@ const newCabinData: CreateCabinPayload = {
   image: "tests/images/image-3.jpg",
 };
 
-test.describe("test cabin", () => {
+test.describe("CRUD cabin", () => {
   test.only("add cabin", async ({ page }) => {
     const cabinPage = new CabinPage(page);
     const formComponent = new FormComponent(page);
@@ -58,6 +58,7 @@ test.describe("test cabin", () => {
   });
   test.only("edit cabin", async ({ page }) => {
     const cabinPage = new CabinPage(page);
+    const toastComponent = new ToastComponent(page);
 
     await page.goto("/cabins");
 
@@ -97,6 +98,41 @@ test.describe("test cabin", () => {
 
     await cabinPage.editCabinBtn.click();
 
+    await expect(toastComponent.toastLocator).toHaveText(
+      "Cabin successfully edited"
+    );
+
     await expect(page.getByText(editCabinName)).toBeVisible();
+  });
+
+  test.only("delete cabin", async ({ page }) => {
+    const cabinPage = new CabinPage(page);
+    const toastComponent = new ToastComponent(page);
+
+    await page.goto("/cabins");
+
+    expect(page.url()).toBe(`${process.env.APP_URL}/cabins`);
+
+    const row = cabinPage.cabinRowLocator.filter({
+      has: page.getByText(editCabinName),
+    });
+
+    const meatBallMenuButton = row.getByRole("button");
+
+    await meatBallMenuButton.click();
+
+    await expect(cabinPage.deleteBtn).toBeVisible();
+
+    await cabinPage.deleteBtn.click();
+
+    const deleteOption = page.getByRole("button", { name: "Delete" });
+
+    await expect(deleteOption).toBeVisible();
+
+    await deleteOption.click();
+
+    await expect(toastComponent.toastLocator).toHaveText(
+      "Cabin successfully deleted"
+    );
   });
 });
