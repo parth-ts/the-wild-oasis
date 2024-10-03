@@ -1,6 +1,7 @@
 import { Locator, Page } from "@playwright/test";
 
 export class CabinPage {
+  readonly addNewCabinLocator: Locator;
   readonly cabinRowLocator: Locator;
   readonly meatBallMenu: Locator;
   readonly editBtn: Locator;
@@ -9,11 +10,14 @@ export class CabinPage {
   readonly editCabinBtn: Locator;
 
   constructor(page: Page) {
+    this.addNewCabinLocator = page.getByRole("button", {
+      name: "Add new cabin",
+    });
     this.cabinRowLocator = page
       .getByRole("table")
       .locator("section")
-      .getByRole("row")
-      .filter({ has: page.getByText("Oasis") });
+      .getByRole("row");
+    // .filter({ has: page.getByText(this.cabinName) });
 
     this.meatBallMenu = this.cabinRowLocator.getByRole("button");
 
