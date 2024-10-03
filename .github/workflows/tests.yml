@@ -20,6 +20,11 @@ jobs:
       - name: Execute Tests
         working-directory: apps/guest
         run: npx playwright test
+        env:
+          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+          NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
+          NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
       - name: Upload articats
         uses: actions/upload-artifact@v4
         with:
