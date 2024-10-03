@@ -23,5 +23,5 @@ export default defineConfig({
       testMatch: "tests/auth.setup.ts",
     },
   ],
-  reporter: [["list"], ["html"]],
+  // reporter: [["list"], ["html"]],
 });
