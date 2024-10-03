@@ -10,6 +10,7 @@ export default defineConfig({
   testDir: "tests",
   use: {
     baseURL: baseURL,
+    trace: "retain-on-failure",
   },
   reporter: [["list"], ["html"]],
   webServer: {
