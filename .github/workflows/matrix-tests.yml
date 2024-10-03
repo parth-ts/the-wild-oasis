@@ -28,6 +28,12 @@ jobs:
         app-name: ["guest", "hotel"]
     name: Testing ${{matrix.app-name}} application (${{inputs.playwright-env}})
     runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_ENV: ${{inputs.playwright-env}}
+      SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+      SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+      NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
+      NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
     steps:
       - name: Clone the repository
         uses: actions/checkout@v4
@@ -37,15 +43,14 @@ jobs:
         run: npm install
       - name: Install browsers
         run: npx playwright install --with-deps
-      - name: Execute Tests
+      - name: Execute all tests
+        if: ${{!inputs.test-match}}
         working-directory: apps/${{matrix.app-name}}
-        run: npx playwright test -g ${{inputs.test-match || ''}}
-        env:
-          PLAYWRIGHT_ENV: ${{inputs.playwright-env}}
-          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
-          NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
-          NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
+        run: npx playwright test -g ${{inputs.test-match}}
+      - name: Execute selected test
+        if: ${{!inputs.test-match}}
+        working-directory: apps/${{matrix.app-name}}
+        run: npx playwright test
       - name: Upload artifcats
         uses: actions/upload-artifact@v4
         if: always()
