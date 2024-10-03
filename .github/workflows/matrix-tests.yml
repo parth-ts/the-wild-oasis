@@ -3,6 +3,7 @@ name: End to end tests Matrix
 on:
   pull_request:
     branches: "main"
+  workflow_dispatch:
 
 jobs:
   test:
