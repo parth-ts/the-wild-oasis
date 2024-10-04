@@ -27,7 +27,7 @@ const newCabinData: CreateCabinPayload = {
 };
 
 test.describe("CRUD cabin", () => {
-  test.only("add cabin", async ({ page }) => {
+  test("add cabin", async ({ page }) => {
     const cabinPage = new CabinPage(page);
     const formComponent = new FormComponent(page);
     const toastComponent = new ToastComponent(page);
@@ -56,7 +56,7 @@ test.describe("CRUD cabin", () => {
       "New cabin successfully created"
     );
   });
-  test.only("edit cabin", async ({ page }) => {
+  test("edit cabin", async ({ page }) => {
     const cabinPage = new CabinPage(page);
     const toastComponent = new ToastComponent(page);
 
@@ -105,7 +105,7 @@ test.describe("CRUD cabin", () => {
     await expect(page.getByText(editCabinName)).toBeVisible();
   });
 
-  test.only("delete cabin", async ({ page }) => {
+  test("delete cabin", async ({ page }) => {
     const cabinPage = new CabinPage(page);
     const toastComponent = new ToastComponent(page);
 

@@ -1,4 +1,4 @@
-import { CreateCabinPayload } from "../types";
+import { CreateCabinPayload, EditCabinPayload } from "../types";
 import { graphqlRequest } from "./request";
 import graphqlDefinition from "./graphql-definitions";
 
@@ -28,7 +28,25 @@ const createCabin = async (cabin: CreateCabinPayload) => {
   );
 };
 
+const editCabin = async (cabin: EditCabinPayload) => {
+  return (
+    graphqlRequest(graphqlDefinition.editIntoCabinsCollectionDefinition),
+    {
+      variables: {
+        set: cabin,
+        filter: {
+          id: {
+            eq: 804,
+          },
+        },
+      },
+    }
+  );
+  // graphqlDefinition.
+};
+
 export const graphqlApiClient = {
   deleteCabinById,
   createCabin,
+  editCabin,
 };
