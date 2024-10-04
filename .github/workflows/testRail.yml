@@ -42,14 +42,6 @@ jobs:
           username: ${{secrets.TESTRAIL_USERNAME}}
           password: ${{secrets.TESTRAIL_KEY}}
 
-      - name: Extract case IDs
-        id: extract-case-ids
-        run: |
-          echo "Extracting case IDs..."
-          case_ids=$(echo "${{ toJSON(fromJSON(steps.fetch-test-cases.outputs.response).tests) }}" | jq -r 'map(.case_id) | join("|")')
-          echo "$case_ids" > case_ids.txt
-          echo "Case IDs: $case_ids"
-
       - name: Clone the repository
         uses: actions/checkout@v4
 
@@ -76,9 +68,7 @@ jobs:
       - name: Execute Tests
         working-directory: apps/${{matrix.app-name}}
         run: |
-          case_ids=$(cat case_ids.txt)
-          echo "Running tests with case IDs: $case_ids"
-          npx playwright test -g "$case_ids" || exit 0
+          (npx playwright test --grep "${{join(fromJSON(steps.fetch-test-cases.outputs.response).tests.*.case_id, '|')}}" || exit 0)
 
       - name: TestRail CLI upload results
         if: always()
