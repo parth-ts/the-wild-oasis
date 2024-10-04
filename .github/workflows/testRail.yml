@@ -45,8 +45,10 @@ jobs:
       - name: Extract case IDs
         id: extract-case-ids
         run: |
-          echo "${{steps.fetch-test-cases.outputs.response}}" > response.json
-          cat response.json | jq -r '.tests | map(.case_id) | join("|")' > case_ids.txt
+          echo "Extracting case IDs..."
+          case_ids=$(echo "${{ toJSON(fromJSON(steps.fetch-test-cases.outputs.response).tests) }}" | jq -r 'map(.case_id) | join("|")')
+          echo "$case_ids" > case_ids.txt
+          echo "Case IDs: $case_ids"
 
       - name: Clone the repository
         uses: actions/checkout@v4
