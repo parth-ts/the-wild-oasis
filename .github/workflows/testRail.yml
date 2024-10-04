@@ -13,18 +13,14 @@ on:
           - development
           - moon
           - qa
-      plan-id:
-        description: Test plan id
-        required: false
-        type: string
       run-id:
         description: Test run id
         required: false
-        type: string
+        type: number
 
 jobs:
   test:
-    if: ${{ github.event.inputs.plan-id != null || github.event.inputs.run-id != null }}
+    if: ${{ github.event.inputs.run-id != null }}
     strategy:
       matrix:
         app-name: ["guest", "hotel"]
@@ -39,7 +35,6 @@ jobs:
     steps:
       - name: Fetch test cases from TestRail
         id: fetch-test-cases
-        if: ${{github.event.inputs.run-id != null}}
         uses: fjogeleit/http-request-action@v1.14.1
         with:
           url: ${{secrets.TESTRAIL_HOST}}index.php?/api/v2/get_tests/${{ github.event.inputs.run-id }}
@@ -49,7 +44,6 @@ jobs:
 
       - name: Extract case IDs
         id: extract-case-ids
-        if: ${{github.event.inputs.run-id != null}}
         run: |
           echo "Extracting case IDs..."
           echo "${{steps.fetch-test-cases.outputs.response}}" | jq -r '.tests | map(.case_id) | join("|")' > case_ids.txt
@@ -98,5 +92,4 @@ jobs:
             --title "Automated Tests from GitHub workflow ${{inputs.playwright-env}}" \
             --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
             -f "apps/${{matrix.app-name}}/playwright-report/junit-report.xml" \
-            --plan-id ${{inputs.plan-id}} \
             --run-id ${{inputs.run-id}}
