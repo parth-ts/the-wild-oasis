@@ -24,6 +24,7 @@ on:
 
 jobs:
   test:
+    if: ${{ github.event.inputs.plan-id != null || github.event.inputs.run-id != null }}
     strategy:
       matrix:
         app-name: ["guest", "hotel"]
@@ -89,7 +90,7 @@ jobs:
           pip install trcli
           trcli -y \
             -h ${{secrets.TESTRAIL_HOST}} \
-            --project ${{secrets.TESTRAIL_PROJECT_NAME}} \
+            --project "${{secrets.TESTRAIL_PROJECT_NAME}}" \
             -u ${{secrets.TESTRAIL_USERNAME}} \
             -k ${{secrets.TESTRAIL_KEY}} \
             parse_junit \
