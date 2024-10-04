@@ -20,7 +20,6 @@ on:
 
 jobs:
   test:
-    if: ${{ github.event.inputs.run-id != null }}
     strategy:
       matrix:
         app-name: ["guest", "hotel"]
