@@ -15,11 +15,12 @@ on:
           - qa
       run-id:
         description: Test run id
-        required: false
+        required: true
         type: number
 
 jobs:
   test:
+    if: ${{ github.event.inputs.run-id != null }}
     strategy:
       matrix:
         app-name: ["guest", "hotel"]
@@ -34,7 +35,6 @@ jobs:
     steps:
       - name: Fetch test cases from TestRail
         id: fetch-test-cases
-        if: ${{ github.event.inputs.run-id != null }}
         uses: fjogeleit/http-request-action@v1.14.1
         with:
           url: ${{secrets.TESTRAIL_HOST}}index.php?/api/v2/get_tests/${{ github.event.inputs.run-id }}
