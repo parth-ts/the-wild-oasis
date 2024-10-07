@@ -5,6 +5,16 @@ mutation deleteFromcabinsCollection($filter: cabinsFilter) {
   }
 }
 `;
+/*
+delete mutations variables
+{
+  "filter": {
+    "id": {
+      "eq": 914
+    }
+  }
+}
+*/
 // delete ex: 2
 // const deleteFromcabinsCollectionMutationDefinition = `
 // mutation deleteFromcabinsCollection($filter: cabinsFilter, $atMost: Int!){
