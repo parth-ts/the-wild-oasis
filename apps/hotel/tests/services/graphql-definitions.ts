@@ -5,6 +5,16 @@ mutation deleteFromcabinsCollection($filter: cabinsFilter) {
   }
 }
 `;
+// delete ex: 2
+// const deleteFromcabinsCollectionMutationDefinition = `
+// mutation deleteFromcabinsCollection($filter: cabinsFilter, $atMost: Int!){
+//   deleteFromcabinsCollection(filter: $filter, atMost: $atMost){
+//     records{
+//       id
+//     }
+//   }
+// }
+// `;
 
 const insertIntocabinsCollectionMutationDefinition = `
 mutation insertIntocabinsCollection($cabins: [cabinsInsertInput!]!) {
@@ -18,14 +28,29 @@ mutation insertIntocabinsCollection($cabins: [cabinsInsertInput!]!) {
 }
 `;
 
-const editIntoCabinsCollectionDefinition = `mutation updateCabinsCollection($set: cabinsUpdateInput!, $filter: cabinsFilter, $atMost: Int!){
+/*
+edit mutations variables
+{
+  "set": {
+    "name": "XYZ"
+  },
+  "filter": {
+    "id": {
+      "eq": 902
+    }
+  },
+  "atMost": 1
+} */
+const editIntoCabinsCollectionDefinition = `
+mutation updateCabinsCollection($set: cabinsUpdateInput!, $filter: cabinsFilter, $atMost: Int!){
   updatecabinsCollection(set: $set, filter: $filter,  atMost:$atMost){
     records{
       id
       name
     }
   }
-}`;
+}
+`;
 
 const definition = {
   deleteFromcabinsCollectionMutationDefinition,

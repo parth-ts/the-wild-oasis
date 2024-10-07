@@ -28,21 +28,22 @@ const createCabin = async (cabin: CreateCabinPayload) => {
   );
 };
 
-const editCabin = async (cabin: EditCabinPayload) => {
-  return (
-    graphqlRequest(graphqlDefinition.editIntoCabinsCollectionDefinition),
-    {
-      variables: {
-        set: cabin,
-        filter: {
-          id: {
-            eq: 804,
-          },
+const editCabin = async (
+  cabin: EditCabinPayload,
+  cabinId: number,
+  atMost: number
+) => {
+  return graphqlRequest(graphqlDefinition.editIntoCabinsCollectionDefinition, {
+    variables: {
+      set: cabin,
+      filter: {
+        id: {
+          eq: cabinId,
         },
       },
-    }
-  );
-  // graphqlDefinition.
+      atMost: atMost,
+    },
+  });
 };
 
 export const graphqlApiClient = {
